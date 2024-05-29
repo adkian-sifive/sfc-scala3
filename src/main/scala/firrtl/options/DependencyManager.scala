@@ -17,7 +17,7 @@ case class DependencyManagerException(message: String, cause: Throwable = null) 
   * @tparam A the type over which this transforms
   * @tparam B the type of the [[firrtl.options.TransformLike TransformLike]]
   */
-trait DependencyManager[A, B <: TransformLike[A] with DependencyAPI[B]] extends TransformLike[A] with DependencyAPI[B] {
+trait DependencyManager[A, B <: TransformLike[A] & DependencyAPI[B]] extends TransformLike[A] with DependencyAPI[B] {
   import DependencyManagerUtils.CharSet
 
   override def prerequisites: Seq[Dependency[B]] = currentState
@@ -52,7 +52,7 @@ trait DependencyManager[A, B <: TransformLike[A] with DependencyAPI[B]] extends 
   /** Store of conversions between classes and objects. Objects that do not exist in the map will be lazily constructed.
     */
   protected lazy val dependencyToObject: LinkedHashMap[Dependency[B], B] = {
-    val init = LinkedHashMap[Dependency[B], B](knownObjects.map(x => oToD(x) -> x).toSeq: _*)
+    val init = LinkedHashMap[Dependency[B], B](knownObjects.map(x => oToD(x) -> x).toSeq*)
     (_targets ++ _currentState)
       .filter(!init.contains(_))
       .map(x => init(x) = x.getObject())
@@ -84,9 +84,9 @@ trait DependencyManager[A, B <: TransformLike[A] with DependencyAPI[B]] extends 
   ): LinkedHashMap[B, LinkedHashSet[B]] = {
 
     val (queue, edges) = {
-      val a: Queue[Dependency[B]] = Queue(start.toSeq: _*)
+      val a: Queue[Dependency[B]] = Queue(start.toSeq*)
       val b: LinkedHashMap[B, LinkedHashSet[B]] =
-        LinkedHashMap[B, LinkedHashSet[B]](start.map((dToO(_) -> LinkedHashSet[B]())).toSeq: _*)
+        LinkedHashMap[B, LinkedHashSet[B]](start.map((dToO(_) -> LinkedHashSet[B]())).toSeq*)
       (a, b)
     }
 
@@ -183,7 +183,7 @@ trait DependencyManager[A, B <: TransformLike[A] with DependencyAPI[B]] extends 
   }
 
   /** Wrap a possible [[CyclicException]] thrown by a thunk in a [[DependencyManagerException]] */
-  private def cyclePossible[A](a: String, diGraph: DiGraph[_])(thunk: => A): A = try { thunk }
+  private def cyclePossible[A](a: String, diGraph: DiGraph[?])(thunk: => A): A = try { thunk }
   catch {
     case e: CyclicException =>
       throw new DependencyManagerException(

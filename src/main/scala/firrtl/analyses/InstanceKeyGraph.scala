@@ -37,8 +37,8 @@ class InstanceKeyGraph private (c: ir.Circuit) {
     circuitTopInstance.OfModule +: internalGraph.reachableFrom(circuitTopInstance).toSeq.map(_.OfModule)
 
   private lazy val cachedUnreachableModules: Seq[OfModule] = {
-    val all = mutable.LinkedHashSet(childInstances.map(c => OfModule(c._1)): _*)
-    val reachable = mutable.LinkedHashSet(cachedReachableModules: _*)
+    val all = mutable.LinkedHashSet(childInstances.map(c => OfModule(c._1))*)
+    val reachable = mutable.LinkedHashSet(cachedReachableModules*)
     all.diff(reachable).toSeq
   }
 
@@ -97,9 +97,9 @@ class InstanceKeyGraph private (c: ir.Circuit) {
   def getChildInstanceMap: mutable.LinkedHashMap[OfModule, mutable.LinkedHashMap[Instance, OfModule]] =
     mutable.LinkedHashMap(childInstances.map {
       case (k, v) =>
-        val moduleMap: mutable.LinkedHashMap[Instance, OfModule] = mutable.LinkedHashMap(v.map(_.toTokens): _*)
+        val moduleMap: mutable.LinkedHashMap[Instance, OfModule] = mutable.LinkedHashMap(v.map(_.toTokens)*)
         TargetToken.OfModule(k) -> moduleMap
-    }: _*)
+    }*)
 
   /** All modules in the circuit reachable from the top module */
   def reachableModules: Seq[OfModule] = cachedReachableModules

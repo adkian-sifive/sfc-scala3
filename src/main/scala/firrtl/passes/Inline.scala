@@ -244,7 +244,7 @@ class InlineInstances extends Transform with DependencyAPIMigration with Registe
       *  The [[RenameMap]]s in renamesMap are appear in renamesSeq
       *  in the order that they should be applied
       */
-    val (renamesMap, renamesSeq) = {
+    val (renamesMap, renamesSeq): (Map[(OfModule, Instance), MutableRenameMap], Seq[RenameMap]) = {{
       val mutableDiGraph = new MutableDiGraph[(OfModule, Instance)]
       // compute instance graph
       instMaps.foreach {
@@ -284,7 +284,7 @@ class InlineInstances extends Transform with DependencyAPIMigration with Registe
           val resultMap = indexMap.mapValues(idx => resultSeq(maxIdx - idx))
           (resultMap, resultSeq)
       }
-    }
+    }}: @unchecked
 
     def fixupRefs(
       instMap:       collection.Map[Instance, OfModule],
@@ -369,7 +369,7 @@ class InlineInstances extends Transform with DependencyAPIMigration with Registe
     })
 
     // Upcast so reduce works (andThen returns RenameMap)
-    val renames = (renamesSeq: Seq[RenameMap]).reduceLeftOption(_ andThen _)
+    val renames = (renamesSeq: Seq[RenameMap]).reduceLeftOption(_ `andThen` _)
 
     val cleanedAnnos = annos.filterNot {
       case InlineAnnotation(_) => true

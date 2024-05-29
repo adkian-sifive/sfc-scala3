@@ -3,6 +3,7 @@
 package firrtl.options.phases
 
 import firrtl.AnnotationSeq
+import firrtl.{annoSeqToSeq, seqToAnnoSeq}
 import firrtl.annotations.DeletedAnnotation
 import firrtl.options.{Phase, Translator}
 
@@ -25,14 +26,10 @@ class DeletedWrapper(p: Phase) extends Phase with Translator[AnnotationSeq, (Ann
   def aToB(a: AnnotationSeq): (AnnotationSeq, AnnotationSeq) = (a, a)
 
   def bToA(b: (AnnotationSeq, AnnotationSeq)): AnnotationSeq = {
-
-    val (in, out) = (mutable.LinkedHashSet() ++ b._1, mutable.LinkedHashSet() ++ b._2)
-
-    (in -- out).map {
+    b._1.diff(b._2).map {
       case DeletedAnnotation(n, a) => DeletedAnnotation(s"$n+$name", a)
       case a                       => DeletedAnnotation(name, a)
     }.toSeq ++ b._2
-
   }
 
   def internalTransform(b: (AnnotationSeq, AnnotationSeq)): (AnnotationSeq, AnnotationSeq) = (b._1, p.transform(b._2))

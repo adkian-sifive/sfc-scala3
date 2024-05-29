@@ -3,7 +3,7 @@
 package firrtl.stage.phases
 
 import firrtl.stage._
-
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.{AnnotationSeq, EmitAllModulesAnnotation, EmitCircuitAnnotation}
 import firrtl.annotations.Annotation
 import firrtl.options.{Dependency, OptionsException, Phase}

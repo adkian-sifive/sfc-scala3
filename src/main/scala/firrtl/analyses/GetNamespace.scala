@@ -4,7 +4,9 @@ package firrtl.analyses
 
 import firrtl.annotations.NoTargetAnnotation
 import firrtl.{CircuitState, DependencyAPIMigration, Namespace, Transform}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.stage.Forms
+
 
 case class ModuleNamespaceAnnotation(namespace: Namespace) extends NoTargetAnnotation
 

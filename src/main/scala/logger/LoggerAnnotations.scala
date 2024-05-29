@@ -3,6 +3,7 @@
 package logger
 
 import firrtl.annotations.{Annotation, NoTargetAnnotation}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{HasShellOptions, ShellOption}
 
 /** An annotation associated with a Logger command line option */
@@ -47,7 +48,7 @@ object ClassLogLevelAnnotation extends HasShellOptions {
       longOption = "class-log-level",
       toAnnotationSeq = (a: Seq[String]) =>
         a.map { aa =>
-          val className :: levelName :: _ = aa.split(":").toList
+          val className :: levelName :: _ = aa.split(":").toList: @unchecked
           val level = LogLevel(levelName)
           ClassLogLevelAnnotation(className, level)
         },

@@ -5,6 +5,7 @@ package firrtl.transforms.formal
 import firrtl.ir.{Circuit, Formal, Statement, Verification}
 import firrtl.stage.TransformManager.TransformDependency
 import firrtl.{CircuitState, DependencyAPIMigration, Transform}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.annotations.NoTargetAnnotation
 import firrtl.options.{PreservesAll, RegisteredTransform, ShellOption}
 
@@ -36,7 +37,7 @@ class AssertSubmoduleAssumptions
   )
 
   def assertAssumption(s: Statement): Statement = s match {
-    case v: Verification if v.op == Formal.Assume => v.withOp(Formal.Assert)
+    case v: Verification if v.op == Formal.Assume => v.copy(op = Formal.Assert)
     case t => t.mapStmt(assertAssumption)
   }
 

@@ -54,8 +54,8 @@ object LogicNode {
 
 object CheckCombLoops {
   type AbstractConnMap = DiGraph[LogicNode]
-  type ConnMap = DiGraph[LogicNode] with EdgeData[LogicNode, Info]
-  type MutableConnMap = MutableDiGraph[LogicNode] with MutableEdgeData[LogicNode, Info]
+  type ConnMap = DiGraph[LogicNode] & EdgeData[LogicNode, Info]
+  type MutableConnMap = MutableDiGraph[LogicNode] & MutableEdgeData[LogicNode, Info]
 
   class CombLoopException(info: Info, mname: String, cycle: Seq[String])
       extends PassException(s"$info: [module $mname] Combinational loop detected:\n" + cycle.mkString("\n"))

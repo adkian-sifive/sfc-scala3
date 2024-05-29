@@ -2,7 +2,8 @@
 
 package firrtl.stage.phases
 
-import firrtl.{AnnotationSeq, ChirrtlForm, CircuitState, Compiler => FirrtlCompiler, Transform, seqToAnnoSeq}
+import firrtl.{AnnotationSeq, ChirrtlForm, CircuitState, Compiler => FirrtlCompiler, Transform}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{Dependency, Phase, PhasePrerequisiteException, Translator}
 import firrtl.stage.{
   CompilerAnnotation,
@@ -12,7 +13,7 @@ import firrtl.stage.{
   RunFirrtlTransformAnnotation
 }
 import firrtl.stage.TransformManager.TransformDependency
-
+import scala.collection.parallel.CollectionConverters._
 import scala.collection.mutable
 
 /** An encoding of the information necessary to run the FIRRTL compiler once */
@@ -142,7 +143,7 @@ class Compiler extends Phase with Translator[AnnotationSeq, Seq[CompilerRun]] {
 
     if (b.size <= 1) { b.map(f) }
     else {
-      collection.parallel.immutable.ParVector(b: _*).par.map(f).seq
+      scala.collection.immutable.Vector(b*).par.map(f).seq
     }
   }
 

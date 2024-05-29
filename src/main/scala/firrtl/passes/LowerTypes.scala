@@ -25,6 +25,7 @@ import firrtl.{
   UnknownForm,
   Utils
 }
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.ir._
 import firrtl.options.Dependency
 import firrtl.stage.TransformManager.TransformDependency

@@ -76,10 +76,10 @@ class TrimIntervals extends Pass {
     case DoPrim(o, args, consts, t)
         if opsToFix.contains(o) &&
           (args.map(_.tpe).collect { case x: IntervalType => x }).size == args.size =>
-      val maxBP = args.map(_.tpe).collect { case IntervalType(_, _, p) => p }.reduce(_ max _)
+      val maxBP = args.map(_.tpe).collect { case IntervalType(_, _, p) => p }.reduce(_ `max` _)
       DoPrim(o, args.map { a => fixBP(maxBP)(a) }, consts, t)
     case Mux(cond, tval, fval, t: IntervalType) =>
-      val maxBP = Seq(tval, fval).map(_.tpe).collect { case IntervalType(_, _, p) => p }.reduce(_ max _)
+      val maxBP = Seq(tval, fval).map(_.tpe).collect { case IntervalType(_, _, p) => p }.reduce(_ `max` _)
       Mux(cond, fixBP(maxBP)(tval), fixBP(maxBP)(fval), t)
     case other => other
   }

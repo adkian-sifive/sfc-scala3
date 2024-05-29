@@ -3,6 +3,7 @@
 package firrtl.options.phases
 
 import firrtl.AnnotationSeq
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{Dependency, Phase, TargetDirAnnotation}
 
 /** Add default annotations for a [[Stage]]

@@ -6,11 +6,12 @@ import firrtl._
 
 import firrtl.Utils.v_keywords
 import firrtl.options.Dependency
+import scala.reflect.ClassTag
 
 /** Transform that removes collisions with reserved keywords
   * @param keywords a set of reserved words
   */
-class RemoveKeywordCollisions(keywords: Set[String]) extends ManipulateNames {
+class RemoveKeywordCollisions[A <: ManipulateNames[?]: ClassTag](keywords: Set[String]) extends ManipulateNames[A] {
 
   private val inlineDelim = "_"
 
@@ -29,7 +30,7 @@ class RemoveKeywordCollisions(keywords: Set[String]) extends ManipulateNames {
 }
 
 /** Transform that removes collisions with Verilog keywords */
-class VerilogRename extends RemoveKeywordCollisions(v_keywords) {
+class VerilogRename[A <: ManipulateNames[?]: ClassTag] extends RemoveKeywordCollisions[A](v_keywords) {
 
   override def prerequisites = firrtl.stage.Forms.LowFormMinimumOptimized ++
     Seq(

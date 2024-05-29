@@ -2,6 +2,7 @@
 
 package firrtl.stage
 
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.transforms._
 import firrtl.passes.memlib._
 import firrtl.options.{HasShellOptions, ShellOption}

@@ -6,7 +6,7 @@ package object firrtl {
   // Force initialization of the Forms object - https://github.com/freechipsproject/firrtl/issues/1462
   private val _dummyForms = firrtl.stage.Forms
 
-  implicit def seqToAnnoSeq(xs: Seq[Annotation]) = AnnotationSeq(xs)
+  implicit def seqToAnnoSeq(xs: Seq[Annotation]): AnnotationSeq = AnnotationSeq(xs)
   implicit def annoSeqToSeq(as: AnnotationSeq): Seq[Annotation] = as.toSeq
 
   /* Options as annotations compatibility items */

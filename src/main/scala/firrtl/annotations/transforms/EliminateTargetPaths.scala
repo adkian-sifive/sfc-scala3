@@ -9,7 +9,7 @@ import firrtl.annotations.TargetToken.{fromDefModuleToTargetToken, Instance, OfM
 import firrtl.annotations.analysis.DuplicationHelper
 import firrtl.annotations._
 import firrtl.ir._
-import firrtl.{AnnotationSeq, CircuitState, DependencyAPIMigration, FirrtlInternalException, RenameMap, Transform}
+import firrtl.{AnnotationSeq, CircuitState, DependencyAPIMigration, FirrtlInternalException, RenameMap, Transform, annoSeqToSeq, seqToAnnoSeq}
 import firrtl.renamemap.MutableRenameMap
 import firrtl.stage.Forms
 import firrtl.transforms.DedupedResult

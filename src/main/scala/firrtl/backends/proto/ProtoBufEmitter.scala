@@ -7,7 +7,7 @@ import firrtl.annotations.NoTargetAnnotation
 import firrtl.options.CustomFileEmission
 import firrtl.options.Viewer.view
 import firrtl.proto.ToProto
-import firrtl.stage.{FirrtlOptions, Forms}
+import firrtl.stage.{FirrtlOptions, Forms, FirrtlOptionsView}
 import firrtl.stage.TransformManager.TransformDependency
 import firrtl.traversals.Foreachers._
 import java.io.{ByteArrayOutputStream, Writer}

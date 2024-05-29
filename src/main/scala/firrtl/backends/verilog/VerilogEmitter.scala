@@ -511,7 +511,7 @@ class VerilogEmitter extends SeqTransform with Emitter {
     }
 
     private val emissionAnnos = annotations.collect {
-      case m: SingleTargetAnnotation[ReferenceTarget] @unchecked with EmissionOption => m
+      case m: SingleTargetAnnotation[ReferenceTarget] @unchecked & EmissionOption => m
     }
 
     annotations.foreach {

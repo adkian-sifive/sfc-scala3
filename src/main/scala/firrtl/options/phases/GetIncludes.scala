@@ -3,9 +3,11 @@
 package firrtl.options.phases
 
 import firrtl.AnnotationSeq
+import org.json4s.convertToJsonInput
 import firrtl.annotations.{AnnotationFileNotFoundException, JsonProtocol}
 import firrtl.options.{InputAnnotationFileAnnotation, Phase, StageUtils}
 import firrtl.FileUtils
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.stage.AllowUnrecognizedAnnotations
 
 import java.io.File

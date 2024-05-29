@@ -3,7 +3,7 @@
 package firrtl.options
 
 import firrtl.{AnnotationSeq, Transform}
-
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import scopt.{OptionDef, OptionParser, Read}
 
 /** Contains information about a [[Shell]] command line option
@@ -43,7 +43,7 @@ trait HasShellOptions {
 
   /** A sequence of options provided
     */
-  def options: Seq[ShellOption[_]]
+  def options: Seq[ShellOption[?]]
 
   /** Add all shell (command line) options to an option parser
     * @param p an option parser

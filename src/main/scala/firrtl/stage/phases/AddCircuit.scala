@@ -5,6 +5,7 @@ package firrtl.stage.phases
 import firrtl.stage._
 
 import firrtl.{AnnotationSeq, Parser}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{Dependency, Phase, PhasePrerequisiteException}
 
 /** [[firrtl.options.Phase Phase]] that expands [[FirrtlFileAnnotation]]/[[FirrtlSourceAnnotation]] into

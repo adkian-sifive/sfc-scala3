@@ -3,7 +3,7 @@
 package firrtl.options
 
 import firrtl.AnnotationSeq
-
+import firrtl.macros.Macros
 import logger.LazyLogging
 
 import scala.collection.mutable.LinkedHashSet
@@ -12,33 +12,33 @@ import scala.reflect
 import scala.reflect.ClassTag
 
 object Dependency {
-  def apply[A <: DependencyAPI[_]: ClassTag]: Dependency[A] = {
+  def apply[A <: DependencyAPI[?]: ClassTag]: Dependency[A] = {
     val clazz = reflect.classTag[A].runtimeClass
     Dependency(Left(clazz.asInstanceOf[Class[A]]))
   }
 
-  def apply[A <: DependencyAPI[_]](c: Class[_ <: A]): Dependency[A] = {
+  def apply[A <: DependencyAPI[?]](c: Class[? <: A]): Dependency[A] = {
     // It's forbidden to wrap the class of a singleton as a Dependency
     require(c.getName.last != '$')
     Dependency(Left(c))
   }
 
-  def apply[A <: DependencyAPI[_]](o: A with Singleton): Dependency[A] = Dependency(Right(o))
+  def apply[A <: DependencyAPI[?]](o: A & Singleton): Dependency[A] = Dependency(Right(o))
 
-  def fromTransform[A <: DependencyAPI[_]](t: A): Dependency[A] = {
+  def fromTransform[A <: DependencyAPI[?]](t: A): Dependency[A] = {
     if (isSingleton(t)) {
-      Dependency[A](Right(t.asInstanceOf[A with Singleton]))
+      Dependency[A](Right(t.asInstanceOf[A & Singleton]))
     } else {
       Dependency[A](Left(t.getClass))
     }
   }
 
   private def isSingleton(obj: AnyRef): Boolean = {
-    reflect.runtime.currentMirror.reflect(obj).symbol.isModuleClass
+    Macros.isModuleClass(obj)
   }
 }
 
-case class Dependency[+A <: DependencyAPI[_]](id: Either[Class[_ <: A], A with Singleton]) {
+case class Dependency[+A <: DependencyAPI[?]](id: Either[Class[? <: A], A & Singleton]) {
   def getObject(): A = id match {
     case Left(c)  => safeConstruct(c)
     case Right(o) => o
@@ -55,7 +55,7 @@ case class Dependency[+A <: DependencyAPI[_]](id: Either[Class[_ <: A], A with S
   }
 
   /** Wrap an [[IllegalAccessException]] due to attempted object construction in a [[DependencyManagerException]] */
-  private def safeConstruct[A](a: Class[_ <: A]): A = try { a.newInstance }
+  private def safeConstruct[A](a: Class[? <: A]): A = try { a.newInstance }
   catch {
     case e: IllegalAccessException =>
       throw new DependencyManagerException(s"Failed to construct '$a'! (Did you try to construct an object?)", e)
@@ -123,7 +123,7 @@ trait IdentityLike[A] { this: TransformLike[A] =>
   * @define seqNote @note The use of a Seq here is to preserve input order. Internally, this will be converted to a private,
   * ordered Set.
   */
-trait DependencyAPI[A <: DependencyAPI[A]] { this: TransformLike[_] =>
+trait DependencyAPI[A <: DependencyAPI[A]] { this: TransformLike[?] =>
 
   /** All transform that must run before this transform
     * $seqNote

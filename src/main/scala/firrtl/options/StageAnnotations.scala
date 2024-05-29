@@ -3,6 +3,7 @@
 package firrtl.options
 
 import firrtl.AnnotationSeq
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.annotations.{Annotation, NoTargetAnnotation}
 import firrtl.options.Viewer.view
 

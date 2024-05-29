@@ -33,7 +33,7 @@ import scala.reflect.ClassTag
   * behavior, use a combination of a sub-class of this annotation and a [[firrtl.transforms.NoDedupAnnotation
   * NoDedupAnnotation]].
   */
-sealed trait ManipulateNamesListAnnotation[A <: ManipulateNames[_]] extends MultiTargetAnnotation {
+sealed trait ManipulateNamesListAnnotation[A <: ManipulateNames[?]] extends MultiTargetAnnotation {
 
   def transform: Dependency[A]
 
@@ -58,7 +58,7 @@ sealed trait ManipulateNamesListAnnotation[A <: ManipulateNames[_]] extends Mult
   * @throws java.lang.IllegalArgumentException if any non-local targets are given
   * @note $noteLocalTargets
   */
-case class ManipulateNamesBlocklistAnnotation[A <: ManipulateNames[_]](
+case class ManipulateNamesBlocklistAnnotation[A <: ManipulateNames[?]](
   targets:   Seq[Seq[Target]],
   transform: Dependency[A])
     extends ManipulateNamesListAnnotation[A] {
@@ -79,7 +79,7 @@ case class ManipulateNamesBlocklistAnnotation[A <: ManipulateNames[_]](
   * @throws java.lang.IllegalArgumentException if any non-local targets are given
   * @note $noteLocalTargets
   */
-case class ManipulateNamesAllowlistAnnotation[A <: ManipulateNames[_]](
+case class ManipulateNamesAllowlistAnnotation[A <: ManipulateNames[?]](
   targets:   Seq[Seq[Target]],
   transform: Dependency[A])
     extends ManipulateNamesListAnnotation[A] {
@@ -97,7 +97,7 @@ case class ManipulateNamesAllowlistAnnotation[A <: ManipulateNames[_]](
   * @param transform the transform that performed this rename
   * @param oldTargets the old targets
   */
-case class ManipulateNamesAllowlistResultAnnotation[A <: ManipulateNames[_]](
+case class ManipulateNamesAllowlistResultAnnotation[A <: ManipulateNames[?]](
   targets:    Seq[Seq[Target]],
   transform:  Dependency[A],
   oldTargets: Seq[Seq[Target]])
@@ -178,7 +178,7 @@ private class RenameDataStructure(
 /** Transform for manipulate all the names in a FIRRTL circuit.
   * @tparam A the type of the child transform
   */
-abstract class ManipulateNames[A <: ManipulateNames[_]: ClassTag] extends Transform with DependencyAPIMigration {
+abstract class ManipulateNames[A <: ManipulateNames[?]: ClassTag] extends Transform with DependencyAPIMigration {
 
   /** A function used to manipulate a name in a FIRRTL circuit */
   def manipulate: (String, Namespace) => Option[String]

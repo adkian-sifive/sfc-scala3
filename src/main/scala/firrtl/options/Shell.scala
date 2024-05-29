@@ -3,7 +3,7 @@
 package firrtl.options
 
 import firrtl.AnnotationSeq
-
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import logger.{ClassLogLevelAnnotation, LogClassNamesAnnotation, LogFileAnnotation, LogLevelAnnotation}
 
 import scopt.OptionParser
@@ -16,7 +16,7 @@ import java.util.ServiceLoader
 class Shell(val applicationName: String) {
 
   /** Command line argument parser (OptionParser) with modifications */
-  protected val parser = new OptionParser[AnnotationSeq](applicationName) with DuplicateHandling with ExceptOnError
+  val parser = new OptionParser[AnnotationSeq](applicationName) with DuplicateHandling with ExceptOnError
 
   /** Contains all discovered [[RegisteredLibrary]] */
   final lazy val registeredLibraries: Seq[RegisteredLibrary] = {

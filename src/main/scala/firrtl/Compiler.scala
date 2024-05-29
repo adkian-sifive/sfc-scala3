@@ -76,8 +76,8 @@ case class CircuitState(
     * @param annoClasses
     * @return
     */
-  def resolvePathsOf(annoClasses: Class[_]*): CircuitState = {
-    val targets = getAnnotationsOf(annoClasses: _*).flatMap(_.getTargets)
+  def resolvePathsOf(annoClasses: Class[?]*): CircuitState = {
+    val targets = getAnnotationsOf(annoClasses*).flatMap(_.getTargets)
     if (targets.nonEmpty) resolvePaths(targets.flatMap { _.getComplete }) else this
   }
 
@@ -85,7 +85,7 @@ case class CircuitState(
     * @param annoClasses
     * @return
     */
-  def getAnnotationsOf(annoClasses: Class[_]*): AnnotationSeq = {
+  def getAnnotationsOf(annoClasses: Class[?]*): AnnotationSeq = {
     annotations.collect { case a if annoClasses.contains(a.getClass) => a }
   }
 }
@@ -376,10 +376,10 @@ abstract class SeqTransform extends Transform with SeqTransformBased {
 trait ResolvedAnnotationPaths {
   this: Transform =>
 
-  val annotationClasses: Traversable[Class[_]]
+  val annotationClasses: Traversable[Class[?]]
 
   override def prepare(state: CircuitState): CircuitState = {
-    state.resolvePathsOf(annotationClasses.toSeq: _*)
+    state.resolvePathsOf(annotationClasses.toSeq*)
   }
 
   // Any transform with this trait invalidates DedupAnnotationsTransform

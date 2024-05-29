@@ -50,7 +50,7 @@ class Wiring(wiSeq: Seq[WiringInfo]) extends Pass {
           portNames(i) = portNames(i) +
             (m.name -> {
               if (si.exists(getModuleName(_) == m.name)) ns.newName(p)
-              else ns.newName(tokenize(c).filterNot("[]." contains _).mkString("_"))
+              else ns.newName(tokenize(c).filterNot("[]." `contains` _).mkString("_"))
             })
       }
     }

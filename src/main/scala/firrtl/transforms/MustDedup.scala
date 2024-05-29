@@ -150,7 +150,7 @@ object MustDeduplicateTransform {
       val nodesToKeep = findNodesToKeep(failure, graph)
       graph.subgraph(nodesToKeep) +
         // Add fake nodes to represent parents of the "shouldDedup" nodes
-        DiGraph(shouldDedup.map(n => getParents(n).mkString(", ") -> n): _*)
+        DiGraph(shouldDedup.map(n => getParents(n).mkString(", ") -> n)*)
     }
     // Gather candidate modules and assign indices for reference
     val candidateIdx: Map[String, Int] =

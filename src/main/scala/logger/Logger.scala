@@ -5,6 +5,7 @@ package logger
 import java.io.{ByteArrayOutputStream, File, FileOutputStream, PrintStream}
 
 import firrtl.AnnotationSeq
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.Viewer.view
 import logger.phases.{AddDefaults, Checks}
 
@@ -268,7 +269,7 @@ object Logger {
     * @param classType Kind of class
     * @param level log level to set
     */
-  def setLevel(classType: Class[_ <: LazyLogging], level: LogLevel.Value): Unit = {
+  def setLevel(classType: Class[? <: LazyLogging], level: LogLevel.Value): Unit = {
     clearCache()
     val name = classType.getCanonicalName
     state.classLevels(name) = level

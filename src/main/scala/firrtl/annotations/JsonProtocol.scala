@@ -20,7 +20,7 @@ trait HasSerializationHints {
   // For serialization of complicated constructor arguments, let the annotation
   // writer specify additional type hints for relevant classes that might be
   // contained within
-  def typeHints: Seq[Class[_]]
+  def typeHints: Seq[Class[?]]
 }
 
 /** Wrapper [[Annotation]] for Annotations that cannot be serialized */
@@ -30,9 +30,9 @@ object JsonProtocol extends LazyLogging {
   private val GetClassPattern = "[^']*'([^']+)'.*".r
 
   class TransformClassSerializer
-      extends CustomSerializer[Class[_ <: Transform]](format =>
+      extends CustomSerializer[Class[? <: Transform]](format =>
         (
-          { case JString(s) => Class.forName(s).asInstanceOf[Class[_ <: Transform]] },
+          { case JString(s) => Class.forName(s).asInstanceOf[Class[? <: Transform]] },
           { case x: Class[_] => JString(x.getName) }
         )
       )
@@ -71,7 +71,7 @@ object JsonProtocol extends LazyLogging {
           {
             case JString(s) =>
               try {
-                Class.forName(s).asInstanceOf[Class[_ <: Transform]].newInstance()
+                Class.forName(s).asInstanceOf[Class[? <: Transform]].newInstance()
               } catch {
                 case e: java.lang.InstantiationException =>
                   throw new FirrtlInternalException(
@@ -222,7 +222,7 @@ object JsonProtocol extends LazyLogging {
       )
 
   /** Construct Json formatter for annotations */
-  def jsonFormat(tags: Seq[Class[_]]) = {
+  def jsonFormat(tags: Seq[Class[?]]) = {
     Serialization.formats(FullTypeHints(tags.toList, "class")) +
       new TransformClassSerializer + new NamedSerializer + new CircuitNameSerializer +
       new ModuleNameSerializer + new ComponentNameSerializer + new TargetSerializer +
@@ -245,7 +245,7 @@ object JsonProtocol extends LazyLogging {
   ): Seq[(Annotation, Throwable)] =
     annos.map(a => a -> Try(write(a))).collect { case (a, Failure(e)) => (a, e) }
 
-  private def getTags(annos: Seq[Annotation]): Seq[Class[_]] =
+  private def getTags(annos: Seq[Annotation]): Seq[Class[?]] =
     annos
       .flatMap({
         case anno: HasSerializationHints => anno.getClass +: anno.typeHints
@@ -292,7 +292,7 @@ object JsonProtocol extends LazyLogging {
   }
 
   def deserializeTry(in: JsonInput, allowUnrecognizedAnnotations: Boolean = false): Try[Seq[Annotation]] = Try {
-    val parsed = parse(in)
+    val parsed: JValue = parse(in)
     val annos = parsed match {
       case JArray(objs) => objs
       case x =>
@@ -336,7 +336,7 @@ object JsonProtocol extends LazyLogging {
         case _: java.lang.ClassNotFoundException =>
           classNotFoundBuildingLoaded = true
           None
-      }): Option[Class[_]]
+      }): Option[Class[?]]
     }
     implicit val formats = jsonFormat(loaded)
     try {

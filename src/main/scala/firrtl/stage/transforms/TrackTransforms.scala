@@ -3,6 +3,7 @@
 package firrtl.stage.transforms
 
 import firrtl.{AnnotationSeq, CircuitState, Transform}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.annotations.NoTargetAnnotation
 import firrtl.options.{Dependency, DependencyManagerException}
 

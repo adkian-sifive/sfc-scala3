@@ -2,9 +2,12 @@
 
 package firrtl.stage.phases
 
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
+import firrtl.stage.FirrtlOptionsView
 import firrtl.{AnnotationSeq, EmitAllModulesAnnotation}
 import firrtl.options.{Dependency, Phase, Viewer}
 import firrtl.stage.{FirrtlOptions, OutputFileAnnotation}
+import firrtl.options.StageOptionsView
 
 /** [[firrtl.options.Phase Phase]] that adds an [[OutputFileAnnotation]] if one does not already exist.
   *

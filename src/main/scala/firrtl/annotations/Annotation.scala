@@ -26,7 +26,7 @@ trait Annotation extends Product {
     * @param ls
     * @return
     */
-  private def extractComponents(ls: Traversable[_]): Traversable[Target] = {
+  private def extractComponents(ls: Traversable[?]): Traversable[Target] = {
     ls.flatMap {
       case c: Target                          => Seq(c)
       case x: scala.collection.Traversable[_] => extractComponents(x)

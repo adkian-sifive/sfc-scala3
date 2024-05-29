@@ -5,10 +5,12 @@ package firrtl.stage.phases
 import firrtl.stage._
 
 import firrtl.{AnnotationSeq, EmitAllModulesAnnotation, EmitCircuitAnnotation, Emitter, Parser}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.annotations.NoTargetAnnotation
 import firrtl.FileUtils
 import firrtl.proto.FromProto
 import firrtl.options.{InputAnnotationFileAnnotation, OptionsException, Phase, StageOptions, StageUtils}
+import firrtl.options.StageOptionsView
 import firrtl.options.Viewer
 import firrtl.options.Dependency
 

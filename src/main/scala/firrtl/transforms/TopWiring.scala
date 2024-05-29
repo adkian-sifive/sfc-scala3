@@ -151,7 +151,7 @@ class TopWiringTransform extends Transform with DependencyAPIMigration {
 
     // Map of component name to relative instance paths that result in a debug wire
     val sourcemods: mutable.Map[String, Seq[(ComponentName, Type, Boolean, InstPath, String)]] =
-      mutable.Map(sSourcesModNames.map(_ -> Seq()): _*)
+      mutable.Map(sSourcesModNames.map(_ -> Seq())*)
 
     state.circuit.modules.foreach { m =>
       m.map(getSourceTypes(sSourcesNames, sourcemods, ModuleName(m.name, CircuitName(state.circuit.main)), state))

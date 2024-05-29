@@ -3,6 +3,7 @@
 package firrtl.stage.phases
 
 import firrtl.AnnotationSeq
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{Dependency, OptionsException, Phase}
 import firrtl.stage.{CompilerAnnotation, RunFirrtlTransformAnnotation}
 

@@ -3,8 +3,6 @@
 package firrtl.stage
 
 import firrtl._
-import firrtl.backends.experimental.rtlil.RtlilEmitter
-import firrtl.backends.experimental.smt.{Btor2Emitter, SMTLibEmitter}
 import firrtl.options.Dependency
 import firrtl.stage.TransformManager.TransformDependency
 
@@ -115,7 +113,7 @@ object Forms {
         Dependency[firrtl.transforms.LegalizeClocksAndAsyncResetsTransform],
         Dependency[firrtl.transforms.FlattenRegUpdate],
         Dependency(passes.VerilogModulusCleanup),
-        Dependency[firrtl.transforms.VerilogRename],
+        Dependency[firrtl.transforms.VerilogRename[?]],
         Dependency(passes.VerilogPrep),
         Dependency[firrtl.AddDescriptionNodes]
       )
@@ -136,9 +134,6 @@ object Forms {
       Dependency[VerilogEmitter],
       Dependency[MinimumVerilogEmitter],
       Dependency[SystemVerilogEmitter],
-      Dependency(SMTLibEmitter),
-      Dependency(Btor2Emitter),
-      Dependency[RtlilEmitter]
     )
 
   val LowEmitters = Dependency[LowFirrtlEmitter] +: BackendEmitters

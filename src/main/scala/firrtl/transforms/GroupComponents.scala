@@ -97,7 +97,7 @@ class GroupComponents extends Transform with DependencyAPIMigration {
     // The label "" indicates the original module, and components belonging to that group will remain
     //   in the original module (not get moved into a new module)
     val label2group: Map[String, MSet[String]] = groups.collect {
-      case GroupAnnotation(set, module, instance, _, _) => set.head.name -> mutable.Set(set.map(_.name): _*)
+      case GroupAnnotation(set, module, instance, _, _) => set.head.name -> mutable.Set(set.map(_.name)*)
     }.toMap + ("" -> mutable.Set(""))
 
     // Name of new module containing each group, by label

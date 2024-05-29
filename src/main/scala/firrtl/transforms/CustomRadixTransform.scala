@@ -4,6 +4,7 @@ package firrtl.transforms
 
 import firrtl.annotations.TargetToken.Instance
 import firrtl.annotations.{Annotation, NoTargetAnnotation, ReferenceTarget, SingleTargetAnnotation}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{CustomFileEmission, Dependency, HasShellOptions, ShellOption}
 import firrtl.stage.TransformManager.TransformDependency
 import firrtl.stage.{Forms, RunFirrtlTransformAnnotation}

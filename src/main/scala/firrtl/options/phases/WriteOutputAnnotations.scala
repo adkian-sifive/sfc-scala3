@@ -3,6 +3,8 @@
 package firrtl.options.phases
 
 import firrtl.AnnotationSeq
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
+import firrtl.options.StageOptionsView
 import firrtl.annotations.{Annotation, DeletedAnnotation, JsonProtocol}
 import firrtl.options.{
   BufferedCustomFileEmission,

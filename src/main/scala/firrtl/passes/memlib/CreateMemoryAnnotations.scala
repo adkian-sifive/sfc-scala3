@@ -22,8 +22,9 @@ class CreateMemoryAnnotations extends Transform with DependencyAPIMigration {
         Seq(MemLibOutConfigFileAnnotation(outputConfig, Nil)) ++ {
           if (inputFileName.isEmpty) None
           else if (new File(inputFileName).exists) {
-            import CustomYAMLProtocol._
-            Some(PinAnnotation(new YamlFileReader(inputFileName).parse[Config].map(_.pin.name)))
+            error("custom yaml protocol not supported in scala 3")
+            // import CustomYAMLProtocol._
+            // Some(PinAnnotation(new YamlFileReader(inputFileName).parse[Config].map(_.pin.name)))
           } else error("Input configuration file does not exist!")
         }
       case a => Seq(a)

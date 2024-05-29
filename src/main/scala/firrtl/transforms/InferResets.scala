@@ -72,12 +72,12 @@ object InferResets {
         // Vectors must all have the same type, so we only process Index 0
         // If the subtype is an aggregate, there can be multiple of each index
         val ts = tokens.collect { case (TargetToken.Index(0) +: tail, tpe) => (tail, tpe) }
-        VectorTree(fromTokens(ts: _*))
+        VectorTree(fromTokens(ts*))
       // BundleTree
       case (TargetToken.Field(_) +: _, _) +: _ =>
         val fields =
           tokens.groupBy { case (TargetToken.Field(n) +: t, _) => n }.mapValues { ts =>
-            fromTokens(ts.map { case (_ +: t, tpe) => (t, tpe) }: _*)
+            fromTokens(ts.map { case (_ +: t, tpe) => (t, tpe) }*)
           }.toMap
         BundleTree(fields)
     }
@@ -274,7 +274,7 @@ class InferResets extends Transform with DependencyAPIMigration {
     map
       .groupBy(_._1.ref)
       .mapValues { ts =>
-        TypeTree.fromTokens(ts.toSeq.map { case (target, tpe) => (target.component, tpe) }: _*)
+        TypeTree.fromTokens(ts.toSeq.map { case (target, tpe) => (target.component, tpe) }*)
       }
       .toMap
 

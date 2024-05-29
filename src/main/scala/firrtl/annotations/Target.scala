@@ -165,7 +165,7 @@ object Target {
     * @return
     */
   def isOnly(seq: Seq[TargetToken], keywords: String*): Boolean = {
-    seq.map(_.is(keywords: _*)).foldLeft(false)(_ || _) && keywords.nonEmpty
+    seq.map(_.is(keywords*)).foldLeft(false)(_ || _) && keywords.nonEmpty
   }
 
   /** @return [[Target]] from human-readable serialization */
@@ -323,7 +323,7 @@ case class GenericTarget(circuitOpt: Option[String], moduleOpt: Option[String], 
     * @param keywords
     */
   private def requireLast(default: Boolean, keywords: String*): Unit = {
-    val isOne = if (tokens.isEmpty) default else tokens.last.is(keywords: _*)
+    val isOne = if (tokens.isEmpty) default else tokens.last.is(keywords*)
     require(isOne, s"${tokens.last} is not one of $keywords")
   }
 
@@ -509,7 +509,7 @@ trait IsComponent extends IsMember {
   override def toNamed: ComponentName = {
     if (isLocal) {
       val mn = ModuleName(module, CircuitName(circuit))
-      Seq(tokens: _*) match {
+      Seq(tokens*) match {
         case Seq(Ref(name)) => ComponentName(name, mn)
         case Ref(_) :: tail if Target.isOnly(tail, ".", "[]") =>
           val name = tokens.foldLeft("") {

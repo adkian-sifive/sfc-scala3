@@ -4,8 +4,6 @@ package firrtl
 package ir
 
 import Utils.{dec2string, trim}
-import firrtl.backends.experimental.smt.random.DefRandom
-import dataclass.{data, since}
 import firrtl.constraint.{Constraint, IsKnown, IsVar}
 import org.apache.commons.text.translate.{AggregateTranslator, JavaUnicodeEscaper, LookupTranslator}
 
@@ -348,9 +346,6 @@ object Reference {
 
   /** Creates a Reference from a Register */
   def apply(reg: DefRegister): Reference = Reference(reg.name, reg.tpe, RegKind, UnknownFlow)
-
-  /** Creates a Reference from a Random Source */
-  def apply(rnd: DefRandom): Reference = Reference(rnd.name, rnd.tpe, RandomKind, UnknownFlow)
 
   /** Creates a Reference from a Node */
   def apply(node: DefNode): Reference = Reference(node.name, node.value.tpe, NodeKind, SourceFlow)
@@ -720,7 +715,12 @@ case class Attach(info: Info, exprs: Seq[Expression]) extends Statement with Has
   def foreachInfo(f:   Info => Unit):             Unit = f(info)
 }
 
-@data class Stop(info: Info, ret: Int, clk: Expression, en: Expression, @since("FIRRTL 1.5") name: String = "")
+class Stop(
+  val info: Info,
+  val ret: Int,
+  val clk: Expression,
+  val en: Expression,
+  val name: String = "")
     extends Statement
     with HasInfo
     with IsDeclaration
@@ -728,7 +728,7 @@ case class Attach(info: Info, exprs: Seq[Expression]) extends Statement with Has
   def mapStmt(f:     Statement => Statement):   Statement = this
   def mapExpr(f:     Expression => Expression): Statement = Stop(info, ret, f(clk), f(en), name)
   def mapType(f:     Type => Type):             Statement = this
-  def mapString(f:   String => String):         Statement = withName(f(name))
+  def mapString(f:   String => String):         Statement = withName(f(name)).asInstanceOf[Statement]
   def mapInfo(f:     Info => Info):             Statement = this.copy(info = f(info))
   def foreachStmt(f: Statement => Unit):        Unit = ()
   def foreachExpr(f: Expression => Unit): Unit = { f(clk); f(en) }
@@ -736,6 +736,9 @@ case class Attach(info: Info, exprs: Seq[Expression]) extends Statement with Has
   def foreachString(f: String => Unit): Unit = f(name)
   def foreachInfo(f:   Info => Unit):   Unit = f(info)
   def copy(info: Info = info, ret: Int = ret, clk: Expression = clk, en: Expression = en): Stop = {
+    copyWithName(info, ret, clk, en, name)
+  }
+  def copyWithName(info: Info = info, ret: Int = ret, clk: Expression = clk, en: Expression = en, name: String): Stop = {
     Stop(info, ret, clk, en, name)
   }
 }
@@ -744,14 +747,13 @@ object Stop {
     Some((s.info, s.ret, s.clk, s.en))
   }
 }
-@data class Print(
-  info:   Info,
-  string: StringLit,
-  args:   Seq[Expression],
-  clk:    Expression,
-  en:     Expression,
-  @since("FIRRTL 1.5")
-  name: String = "")
+class Print(
+  val info:   Info,
+  val string: StringLit,
+  val args:   Seq[Expression],
+  val clk:    Expression,
+  val en:     Expression,
+  val name: String = "")
     extends Statement
     with HasInfo
     with IsDeclaration
@@ -759,7 +761,7 @@ object Stop {
   def mapStmt(f:     Statement => Statement):   Statement = this
   def mapExpr(f:     Expression => Expression): Statement = Print(info, string, args.map(f), f(clk), f(en), name)
   def mapType(f:     Type => Type):             Statement = this
-  def mapString(f:   String => String):         Statement = withName(f(name))
+  def mapString(f:   String => String):         Statement = withName(f(name)).asInstanceOf[Statement]
   def mapInfo(f:     Info => Info):             Statement = this.copy(info = f(info))
   def foreachStmt(f: Statement => Unit):        Unit = ()
   def foreachExpr(f: Expression => Unit): Unit = { args.foreach(f); f(clk); f(en) }
@@ -772,6 +774,16 @@ object Stop {
     args:   Seq[Expression] = args,
     clk:    Expression = clk,
     en:     Expression = en
+  ): Print = {
+    copyWithName(info, string, args, clk, en, name)
+  }
+  def copyWithName(
+    info:   Info = info,
+    string: StringLit = string,
+    args:   Seq[Expression] = args,
+    clk:    Expression = clk,
+    en:     Expression = en,
+    name:   String
   ): Print = {
     Print(info, string, args, clk, en, name)
   }
@@ -789,15 +801,14 @@ object Formal extends Enumeration {
   val Cover = Value("cover")
 }
 
-@data class Verification(
-  op:   Formal.Value,
-  info: Info,
-  clk:  Expression,
-  pred: Expression,
-  en:   Expression,
-  msg:  StringLit,
-  @since("FIRRTL 1.5")
-  name: String = "")
+class Verification(
+  val op:   Formal.Value,
+  val info: Info,
+  val clk:  Expression,
+  val pred: Expression,
+  val en:   Expression,
+  val msg:  StringLit,
+  val name: String = "")
     extends Statement
     with HasInfo
     with IsDeclaration
@@ -806,7 +817,7 @@ object Formal extends Enumeration {
   def mapExpr(f: Expression => Expression): Statement =
     copy(clk = f(clk), pred = f(pred), en = f(en))
   def mapType(f:     Type => Type):      Statement = this
-  def mapString(f:   String => String):  Statement = withName(f(name))
+  def mapString(f:   String => String):  Statement = withName(f(name)).asInstanceOf[Statement]
   def mapInfo(f:     Info => Info):      Statement = copy(info = f(info))
   def foreachStmt(f: Statement => Unit): Unit = ()
   def foreachExpr(f: Expression => Unit): Unit = { f(clk); f(pred); f(en); }
@@ -820,6 +831,17 @@ object Formal extends Enumeration {
     pred: Expression = pred,
     en:   Expression = en,
     msg:  StringLit = msg
+  ): Verification = {
+    copyWithName(op, info, clk, pred, en, msg, name)
+  }
+  def copyWithName(
+    op:   Formal.Value = op,
+    info: Info = info,
+    clk:  Expression = clk,
+    pred: Expression = pred,
+    en:   Expression = en,
+    msg:  StringLit = msg,
+    name: String
   ): Verification = {
     Verification(op, info, clk, pred, en, msg, name)
   }
@@ -924,13 +946,13 @@ case object UnknownBound extends Bound {
   def serialize: String = Serializer.serialize(this)
   def map(f: Constraint => Constraint): Constraint = this
   override def reduce(): Constraint = this
-  val children = Vector()
+  lazy val children = Vector()
 }
 case class CalcBound(arg: Constraint) extends Bound {
   def serialize: String = Serializer.serialize(this)
   def map(f: Constraint => Constraint): Constraint = f(arg)
   override def reduce(): Constraint = arg
-  val children = Vector(arg)
+  lazy val children = Vector(arg)
 }
 case class VarBound(name: String) extends IsVar with Bound {
   override def serialize: String = Serializer.serialize(this)
@@ -1079,7 +1101,7 @@ case class IntervalType(lower: Bound, upper: Bound, point: Width) extends Ground
   })
 
   /** If bounds are known, calculates the width, otherwise returns UnknownWidth */
-  lazy val width: Width = (point, lower, upper) match {
+  val width: Width = (point, lower, upper) match {
     case (IntWidth(i), l: IsKnown, u: IsKnown) =>
       IntWidth(Math.max(Utils.getSIntWidth(minAdjusted.get), Utils.getSIntWidth(maxAdjusted.get)))
     case _ => UnknownWidth

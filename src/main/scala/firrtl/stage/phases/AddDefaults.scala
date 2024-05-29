@@ -3,6 +3,7 @@
 package firrtl.stage.phases
 
 import firrtl.{AnnotationSeq, VerilogEmitter}
+import firrtl.{seqToAnnoSeq, annoSeqToSeq}
 import firrtl.options.{Dependency, Phase, TargetDirAnnotation}
 import firrtl.stage.TransformManager.TransformDependency
 import firrtl.transforms.BlackBoxTargetDirAnno

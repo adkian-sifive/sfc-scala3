@@ -2,10 +2,14 @@
 
 enablePlugins(SiteScaladocPlugin)
 
+val scala3Version = "3.4.1" // "3.3.3"
+
+Compile / compile / logLevel := Level.Error
+
 lazy val commonSettings = Seq(
   organization := "edu.berkeley.cs",
-  scalaVersion := "2.12.17",
-  crossScalaVersions := Seq("2.13.10", "2.12.17")
+  scalaVersion := scala3Version,
+  crossScalaVersions := Seq("2.13.10", "2.12.17", scala3Version)
 )
 
 lazy val isAtLeastScala213 = Def.setting {
@@ -16,44 +20,30 @@ lazy val isAtLeastScala213 = Def.setting {
 lazy val firrtlSettings = Seq(
   name := "firrtl",
   version := "1.6-SNAPSHOT",
-  addCompilerPlugin(scalafixSemanticdb),
+  // addCompilerPlugin(scalafixSemanticdb),
   scalacOptions := Seq(
     "-deprecation",
     "-unchecked",
     "-language:reflectiveCalls",
     "-language:existentials",
     "-language:implicitConversions",
-    "-Yrangepos" // required by SemanticDB compiler plugin
+    // "-rewrite", "-source:3.4-migration"
   ),
   // Always target Java8 for maximum compatibility
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
   libraryDependencies ++= Seq(
-    "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    "org.scalatest" %% "scalatest" % "3.2.14" % "test",
-    "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % "test",
-    "com.github.scopt" %% "scopt" % "3.7.1",
-    "net.jcazevedo" %% "moultingyaml" % "0.4.2",
-    "org.json4s" %% "json4s-native" % "4.0.6",
-    "org.apache.commons" % "commons-text" % "1.10.0",
-    "io.github.alexarchambault" %% "data-class" % "0.2.5",
-    "com.lihaoyi" %% "os-lib" % "0.8.1"
+    "org.scala-lang" %% "toolkit" % "0.1.7",
+  //   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+  //   "org.scalatest" %% "scalatest" % "3.2.14" % "test",
+  //   "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % "test",
+    "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
+    "com.github.scopt" %% "scopt" % "4.1.0",
+  //   "net.jcazevedo" %% "moultingyaml" % "0.4.2",
+    "org.json4s" %% "json4s-native" % "4.1.0-M5",
+    "org.apache.commons" % "commons-text" % "1.12.0",
+  //   "io.github.alexarchambault" %% "data-class" % "0.2.5",
+    "com.lihaoyi" %% "os-lib" % "0.9.1"
   ),
-  // macros for the data-class library
-  libraryDependencies ++= {
-    if (isAtLeastScala213.value) Nil
-    else Seq(compilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
-  },
-  scalacOptions ++= {
-    if (isAtLeastScala213.value) Seq("-Ymacro-annotations")
-    else Nil
-  },
-  // starting with scala 2.13 the parallel collections are separate from the standard library
-  libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, major)) if major <= 12 => Seq()
-      case _                               => Seq("org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4")
-    }
-  },
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots"),
     Resolver.sonatypeRepo("releases")
@@ -97,70 +87,6 @@ lazy val antlrSettings = Seq(
   Antlr4 / javaSource := (Compile / sourceManaged).value
 )
 
-lazy val publishSettings = Seq(
-  publishMavenStyle := true,
-  Test / publishArtifact := false,
-  pomIncludeRepository := { x => false },
-  // scm is set by sbt-ci-release
-  pomExtra := <url>http://chisel.eecs.berkeley.edu/</url>
-    <licenses>
-      <license>
-        <name>apache_v2</name>
-        <url>https://opensource.org/licenses/Apache-2.0</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
-    <developers>
-      <developer>
-        <id>jackbackrack</id>
-        <name>Jonathan Bachrach</name>
-        <url>http://www.eecs.berkeley.edu/~jrb/</url>
-      </developer>
-    </developers>,
-  publishTo := {
-    val v = version.value
-    val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT")) {
-      Some("snapshots".at(nexus + "content/repositories/snapshots"))
-    } else {
-      Some("releases".at(nexus + "service/local/staging/deploy/maven2"))
-    }
-  }
-)
-
-lazy val docSettings = Seq(
-  Compile / doc := (ScalaUnidoc / doc).value,
-  autoAPIMappings := true,
-  Compile / doc / scalacOptions ++= Seq(
-    // ANTLR-generated classes aren't really part of public API and cause
-    // errors in ScalaDoc generation
-    "-skip-packages",
-    "firrtl.antlr",
-    "-Xfatal-warnings",
-    "-feature",
-    "-diagrams",
-    "-diagrams-max-classes",
-    "25",
-    "-doc-version",
-    version.value,
-    "-doc-title",
-    name.value,
-    "-doc-root-content",
-    baseDirectory.value + "/root-doc.txt",
-    "-sourcepath",
-    (ThisBuild / baseDirectory).value.toString,
-    "-doc-source-url", {
-      val branch =
-        if (version.value.endsWith("-SNAPSHOT")) {
-          "1.6.x"
-        } else {
-          s"v${version.value}"
-        }
-      s"https://github.com/chipsalliance/firrtl/tree/$branch€{FILE_PATH_EXT}#L€{FILE_LINE}"
-    }
-  )
-)
-
 lazy val firrtl = (project in file("."))
   .enablePlugins(ProtobufPlugin)
   .enablePlugins(ScalaUnidocPlugin)
@@ -176,8 +102,6 @@ lazy val firrtl = (project in file("."))
   .settings(assemblySettings)
   .settings(inConfig(Test)(baseAssemblySettings))
   .settings(testAssemblySettings)
-  .settings(publishSettings)
-  .settings(docSettings)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     buildInfoPackage := name.value,
