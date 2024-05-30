@@ -25,7 +25,7 @@ class ResolveMemoryReference extends Transform with DependencyAPIMigration {
   /** Helper class for determining when two memories are equivalent while igoring
     * irrelevant details like name and info
     */
-  private class WrappedDefAnnoMemory(val underlying: DefAnnotatedMemory) {
+  class WrappedDefAnnoMemory(val underlying: DefAnnotatedMemory) {
     // Remove irrelevant details for comparison
     private def generic = underlying.copy(info = NoInfo, name = "", memRef = None)
     override def hashCode: Int = generic.hashCode
@@ -37,7 +37,7 @@ class ResolveMemoryReference extends Transform with DependencyAPIMigration {
   private def wrap(mem: DefAnnotatedMemory) = new WrappedDefAnnoMemory(mem)
 
   // Values are Tuple of Module Name and Memory Instance Name
-  private type AnnotatedMemories = collection.mutable.HashMap[WrappedDefAnnoMemory, (String, String)]
+  type AnnotatedMemories = collection.mutable.HashMap[WrappedDefAnnoMemory, (String, String)]
 
   private def dedupable(noDedups: Map[String, Set[String]], module: String, memory: String): Boolean =
     noDedups.get(module).map(!_.contains(memory)).getOrElse(true)
